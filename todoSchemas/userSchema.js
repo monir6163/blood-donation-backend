@@ -61,6 +61,10 @@ const userSchema = mongoose.Schema({
     unionId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "unions",
+        required: false,
+    },
+    pc: {
+        type: String,
     },
 });
 module.exports = userSchema;

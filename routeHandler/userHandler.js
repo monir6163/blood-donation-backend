@@ -64,6 +64,7 @@ router.post("/register", uploads.single("image"), async (req, res) => {
             districtId: req.body.districtId,
             upazilaId: req.body.upazilaId,
             unionId: req.body.unionId,
+            pc: req.body.pc,
             password: hashedPassword,
         });
         await newUser.save();
@@ -111,7 +112,10 @@ router.get("/donated", async (req, res) => {
     try {
         const total_page = 8;
         const page = parseInt(req.query.page || "0");
-        const total_user = await User.countDocuments({});
+        const total_user = await User.countDocuments({
+            donar: "1",
+            donarTimes: { $gte: "১" },
+        });
         const allDonated = await User.find({
             donar: "1",
             donarTimes: { $gte: "১" },

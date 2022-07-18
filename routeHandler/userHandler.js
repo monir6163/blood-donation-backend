@@ -82,9 +82,9 @@ router.post("/register", uploads.single("image"), async (req, res) => {
 // get all ready for blood user
 router.get("/all", async (req, res) => {
     try {
-        const total_page = 8;
-        const page = parseInt(req.query.page || "0");
-        const total_user = await User.countDocuments({});
+        // const total_page = 8;
+        // const page = parseInt(req.query.page || "0");
+        // const total_user = await User.countDocuments({});
         const allUsers = await User.find({ donar: "1", donarTimes: "০" })
             .populate("divisionId")
             .populate("districtId")
@@ -95,12 +95,12 @@ router.get("/all", async (req, res) => {
                 password: 0,
             })
             .sort({ _id: -1 })
-            .limit(total_page)
-            .skip(total_page * page)
+            // .limit(total_page)
+            // .skip(total_page * page)
             .exec();
         res.status(200).send({
             allUsers,
-            totalPages: Math.ceil(total_user / total_page),
+            // totalPages: Math.ceil(total_user / total_page),
         });
     } catch (err) {
         res.status(500).send({
@@ -110,12 +110,12 @@ router.get("/all", async (req, res) => {
 });
 router.get("/donated", async (req, res) => {
     try {
-        const total_page = 8;
-        const page = parseInt(req.query.page || "0");
-        const total_user = await User.countDocuments({
-            donar: "1",
-            donarTimes: { $gte: "১" },
-        });
+        // const total_page = 8;
+        // const page = parseInt(req.query.page || "0");
+        // const total_user = await User.countDocuments({
+        //     donar: "1",
+        //     donarTimes: { $gte: "১" },
+        // });
         const allDonated = await User.find({
             donar: "1",
             donarTimes: { $gte: "১" },
@@ -129,12 +129,12 @@ router.get("/donated", async (req, res) => {
                 password: 0,
             })
             .sort({ _id: -1 })
-            .limit(total_page)
-            .skip(total_page * page)
+            // .limit(total_page)
+            // .skip(total_page * page)
             .exec();
         res.status(200).send({
             allDonated,
-            totalPages: Math.ceil(total_user / total_page),
+            // totalPages: Math.ceil(total_user / total_page),
         });
     } catch (err) {
         res.status(500).send({

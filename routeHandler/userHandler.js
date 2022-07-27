@@ -181,6 +181,8 @@ router.post("/login", async (req, res) => {
                 const token = jwt.sign(
                     {
                         id: user[0]._id,
+                        name: user[0].name,
+                        donar: user[0].donar,
                     },
                     process.env.JWT_SECRET,
                     { expiresIn: "24h" }
@@ -242,7 +244,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // update user data
-router.patch("/:id", checkLogin, async (req, res) => {
+router.patch("/:id", async (req, res) => {
     const { id } = req.params;
     const { name, age, donarTimes } = req.body;
     try {

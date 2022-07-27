@@ -79,6 +79,7 @@ router.post("/register", uploads.single("image"), async (req, res) => {
         });
     }
 });
+
 // get all ready for blood user
 router.get("/all", async (req, res) => {
     try {
@@ -180,10 +181,6 @@ router.post("/login", async (req, res) => {
                 const token = jwt.sign(
                     {
                         id: user[0]._id,
-                        name: user[0].name,
-                        number: user[0].number,
-                        imageUrl: user[0].imageUrl,
-                        donar: user[0].donar,
                     },
                     process.env.JWT_SECRET,
                     { expiresIn: "24h" }
@@ -240,6 +237,37 @@ router.get("/:id", async (req, res) => {
     } catch (err) {
         res.status(500).send({
             error: "User Get Failed",
+        });
+    }
+});
+
+// update user data
+router.patch("/:id", checkLogin, async (req, res) => {
+    const { id } = req.params;
+    const { name, age, donarTimes } = req.body;
+    try {
+        const user = await User.findById(id)
+            .populate("divisionId")
+            .populate("districtId")
+            .populate("upazilaId")
+            .populate("unionId");
+        if (!user) {
+            return res.status(404).send({
+                error: "User not found",
+            });
+        }
+        user.name = name ?? user.name;
+        user.age = age ?? user.age;
+        user.donarTimes = donarTimes ?? user.donarTimes;
+        await user.save();
+        return res.status(200).send({
+            status: "success",
+            message: "User updated successfully!",
+            user: user,
+        });
+    } catch (err) {
+        return res.status(500).send({
+            error: "User Update Failed",
         });
     }
 });

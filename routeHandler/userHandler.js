@@ -7,6 +7,7 @@ const path = require("path");
 const multer = require("multer");
 const router = express.Router();
 const userSchema = require("../todoSchemas/userSchema");
+const Division = require("../todoSchemas/divisionSchema");
 const User = new mongoose.model("User", userSchema);
 const checkLogin = require("../middlewares/checkLogin");
 // image upload with multer mongoose
@@ -244,28 +245,48 @@ router.get("/:id", async (req, res) => {
 });
 
 // update user data
-router.patch("/:id", async (req, res) => {
-    const { id } = req.params;
-    const { name, age, donarTimes } = req.body;
+router.patch("/update/:userId", async (req, res) => {
+    const { userId } = req.params;
+    console.log(req.params);
+    const {
+        name,
+        age,
+        donarTimes,
+        divisionId,
+        districtId,
+        upazilaId,
+        unionId,
+        pc,
+    } = req.body.allValue;
     try {
-        const user = await User.findById(id)
+        const user = await User.findById(userId)
             .populate("divisionId")
             .populate("districtId")
             .populate("upazilaId")
-            .populate("unionId");
+            .populate("unionId")
+            .populate("pc");
         if (!user) {
             return res.status(404).send({
                 error: "User not found",
             });
         }
+        // console.log(user.divisionId.id, id);
         user.name = name ?? user.name;
         user.age = age ?? user.age;
         user.donarTimes = donarTimes ?? user.donarTimes;
+        user.divisionId = divisionId ?? user.divisionId;
+        user.districtId = districtId ?? user.districtId;
+        user.upazilaId = upazilaId ?? user.upazilaId;
+        if (unionId) {
+            user.unionId = unionId ?? user.unionId;
+        }
+        if (pc) {
+            user.pc = pc ?? user.pc;
+        }
         await user.save();
         return res.status(200).send({
             status: "success",
             message: "User updated successfully!",
-            user: user,
         });
     } catch (err) {
         return res.status(500).send({
